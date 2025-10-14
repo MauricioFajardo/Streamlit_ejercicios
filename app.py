@@ -107,8 +107,8 @@ with tabs[3]:
         col2.write("**Vector normalizado:**")
         col2.code(f"{np.round(v_normalizado, 3)}", language="python")
 
-    st.divider()
-st.header("👩‍🎓👨‍🎓 Sección adicional: Datos de jóvenes del ciclo")
+st.divider()
+st.header("Sección adicional: Datos de jóvenes del ciclo")
 
 materias_posibles = [
     "Aplicaciones seguras",
@@ -118,10 +118,38 @@ materias_posibles = [
     "Aplicación en la nube"
 ]
 
+nombres_completos = [
+    "Mariuxi Andrea Calle Dumaguala",
+    "Maura Mileth Calle Leon",
+    "Steven Alexander Carpio Chillogallo",
+    "Erick Fernando Chacon Avila",
+    "Edwin Alexander Choez Dominguez",
+    "Adriana Valentina Cornejo Ulloa",
+    "David Alfonso Espinoza Chévez",
+    "Anthony Mauricio Fajardo Vasquez",
+    "Freddy Ismael Gomez Ordoñez",
+    "Wendy Nicole Llivichuzhca Mayancela",
+    "Alexander Ismael Loja Llivichuzhca",
+    "David Alexander Lopez Saltos",
+    "Victor Jonnathan Mendez Villa",
+    "John Sebastian Montenegro Calle",
+    "Carmen Elizabeth Neira Inga",
+    "Joel Stalyn Pesantez Berrezueta",
+    "Gilson Stalyn Tenemea Aguilar",
+    "Kenny Alexander Valdivieso Coronel"
+]
+
+nombres = []
+apellidos = []
+for n in nombres_completos:
+    partes = n.split()
+    nombres.append(" ".join(partes[:-2]))  # todo excepto los dos últimos como nombres
+    apellidos.append(" ".join(partes[-2:]))  # los dos últimos como apellidos
+
 datos_iniciales = {
-    "nombres": [f"Nombre{i+1}" for i in range(18)],
-    "apellidos": [f"Apellido{i+1}" for i in range(18)],
-    "edad": np.random.randint(18, 25, size=18),
+    "nombres": nombres,
+    "apellidos": apellidos,
+    "edad": np.random.randint(20, 26, size=18),
     "notas": np.random.uniform(6, 10, size=18).round(2),
     "materias": np.random.choice(materias_posibles, size=18)
 }
@@ -141,8 +169,6 @@ st.download_button(
     file_name="datos_jovenes.csv",
     mime="text/csv",
 )
-
-
 
 
 
