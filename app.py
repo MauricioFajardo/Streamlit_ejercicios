@@ -16,7 +16,6 @@ st.markdown(
 )
 
 st.title("🌟 Proyecto Interactivo con NumPy")
-st.subheader("Desarrollado con Streamlit | Manteniendo la lógica original")
 st.write("Selecciona un ejercicio en las pestañas inferiores para ver los resultados:")
 
 tabs = st.tabs([
