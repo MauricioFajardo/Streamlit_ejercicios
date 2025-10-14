@@ -107,3 +107,42 @@ with tabs[3]:
         col2.write("**Vector normalizado:**")
         col2.code(f"{np.round(v_normalizado, 3)}", language="python")
 
+    st.divider()
+st.header("👩‍🎓👨‍🎓 Sección adicional: Datos de jóvenes del ciclo")
+
+materias_posibles = [
+    "Aplicaciones seguras",
+    "IA",
+    "Formulación de proyectos",
+    "Proyectos tecnológicos",
+    "Aplicación en la nube"
+]
+
+datos_iniciales = {
+    "nombres": [f"Nombre{i+1}" for i in range(18)],
+    "apellidos": [f"Apellido{i+1}" for i in range(18)],
+    "edad": np.random.randint(18, 25, size=18),
+    "notas": np.random.uniform(6, 10, size=18).round(2),
+    "materias": np.random.choice(materias_posibles, size=18)
+}
+
+df_jovenes = pd.DataFrame(datos_iniciales)
+
+st.markdown("### ✏️ Edita los datos libremente:")
+df_editado = st.data_editor(df_jovenes, use_container_width=True, num_rows="fixed")
+
+st.markdown("### 📋 Vista previa de los datos editados:")
+st.dataframe(df_editado, use_container_width=True)
+
+csv = df_editado.to_csv(index=False).encode("utf-8")
+st.download_button(
+    label="📥 Descargar CSV",
+    data=csv,
+    file_name="datos_jovenes.csv",
+    mime="text/csv",
+)
+
+
+
+
+
