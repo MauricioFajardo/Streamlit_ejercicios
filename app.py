@@ -24,10 +24,9 @@ tabs = st.tabs([
     "Ejercicio 3",
     "Ejercicio 4",
     "Ejercicio 5 (Pandas)",
-    "Descargar CSV (Pandas)"  # 👈 Nueva pestaña
+    "Ejercicio 6 (Matplotlib)"  # 👈 Nueva pestaña
 ])
 
-# ================== EJERCICIO 1 ==================
 with tabs[0]:
     st.header("🧮 Ejercicio 1: Estadísticos básicos del 1 al 100")
     arr = np.arange(1, 101)
@@ -122,6 +121,26 @@ with tabs[3]:
 with tabs[4]:
     st.header("🧩 Ejercicio 5: Análisis de Datos con Pandas")
 
+    st.header("📂 Descargar CSV de ejemplo para Pandas")
+
+    data = {
+        "producto": ["A","A","A","B","B","B","C","C","C","D","D","D","E","E","E"],
+        "mes": ["Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo"],
+        "venta": [200,150,None,300,250,280,100,50,120,400,420,None,350,330,360],
+        "cantidad": [10,8,12,15,None,18,5,3,4,20,21,19,16,None,18]
+    }
+
+    df_csv = pd.DataFrame(data)
+    st.dataframe(df_csv, use_container_width=True)
+
+    csv = df_csv.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="📥 Descargar CSV de ejemplo",
+        data=csv,
+        file_name="ventas_productos.csv",
+        mime="text/csv",
+    )
+
     st.markdown("""
     ### 🧩 Ejercicios (Pandas)
     1. Carga un CSV propio (o exporta `df` a CSV y vuelve a leerlo).  
@@ -192,24 +211,73 @@ with tabs[4]:
     else:
         st.info("📥 Carga un archivo CSV para comenzar el análisis.")
 
-# ================== DESCARGAR CSV ==================
 with tabs[5]:
-    st.header("📂 Descargar CSV de ejemplo para Pandas")
+    st.header("📊 Ejercicio 6: Visualización con Matplotlib")
+
+    import matplotlib.pyplot as plt
+
+    # 🔹 Simulamos un DataFrame con ventas
+    np.random.seed(42)
+    productos = ["Laptop", "Mouse", "Teclado", "Monitor", "Impresora"]
+    categorias = ["Electrónica", "Accesorios", "Oficina"]
+    meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio"]
 
     data = {
-        "producto": ["A","A","A","B","B","B","C","C","C","D","D","D","E","E","E"],
-        "mes": ["Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo"],
-        "venta": [200,150,None,300,250,280,100,50,120,400,420,None,350,330,360],
-        "cantidad": [10,8,12,15,None,18,5,3,4,20,21,19,16,None,18]
+        "producto": np.random.choice(productos, 60),
+        "categoria": np.random.choice(categorias, 60),
+        "mes": np.random.choice(meses, 60),
+        "cantidad": np.random.randint(1, 20, 60),
+        "precio_unitario": np.random.uniform(10, 500, 60)
     }
 
-    df_csv = pd.DataFrame(data)
-    st.dataframe(df_csv, use_container_width=True)
+    df = pd.DataFrame(data)
+    df["total"] = df["cantidad"] * df["precio_unitario"]
 
-    csv = df_csv.to_csv(index=False).encode("utf-8")
-    st.download_button(
-        label="📥 Descargar CSV de ejemplo",
-        data=csv,
-        file_name="ventas_productos.csv",
-        mime="text/csv",
-    )
+    st.subheader("📋 Datos simulados")
+    st.dataframe(df.head(10), use_container_width=True)
+
+    st.markdown("### 1️⃣ Gráfico de líneas — Precio promedio mensual")
+    promedio_mensual = df.groupby("mes")["precio_unitario"].mean().reindex(meses)
+    fig1, ax1 = plt.subplots(figsize=(8, 4))
+    ax1.plot(promedio_mensual, marker='o', color='blue')
+    ax1.set_title("Evolución del precio promedio mensual")
+    ax1.set_xlabel("Mes")
+    ax1.set_ylabel("Precio promedio ($)")
+    ax1.grid(True)
+    st.pyplot(fig1)
+
+    st.markdown("### 2️⃣ Gráfico de barras — Top 5 combinaciones producto–mes con mayor total")
+    top5 = df.groupby(["producto", "mes"])["total"].sum().nlargest(5)
+    fig2, ax2 = plt.subplots(figsize=(8, 4))
+    top5.plot(kind='bar', color='teal', ax=ax2)
+    ax2.set_title("Top 5 combinaciones producto–mes con mayor total")
+    ax2.set_xlabel("Producto - Mes")
+    ax2.set_ylabel("Total ($)")
+    ax2.tick_params(axis='x', rotation=45)
+    st.pyplot(fig2)
+
+    st.markdown("### 3️⃣ Boxplot — Total por categoría")
+    valores = [df[df["categoria"] == c]["total"] for c in df["categoria"].unique()]
+    fig3, ax3 = plt.subplots(figsize=(8, 4))
+    ax3.boxplot(valores, labels=df["categoria"].unique(), patch_artist=True)
+    ax3.set_title("Distribución del total por categoría")
+    ax3.set_xlabel("Categoría")
+    ax3.set_ylabel("Total ($)")
+    ax3.grid(True)
+    st.pyplot(fig3)
+
+    st.markdown("### 4️⃣ Histograma — Cantidad (bins=10)")
+    fig4, ax4 = plt.subplots(figsize=(8, 4))
+    ax4.hist(df["cantidad"], bins=10, color='purple', edgecolor='black')
+    ax4.set_title("Distribución de la cantidad")
+    ax4.set_xlabel("Cantidad vendida")
+    ax4.set_ylabel("Frecuencia")
+    ax4.grid(True)
+    st.pyplot(fig4)
+
+    st.markdown("""
+    #### 📈 Análisis del histograma:
+    - Si los valores se concentran a la izquierda ➜ la mayoría de compras tienen pocas unidades.  
+    - Si está uniforme ➜ las cantidades varían mucho entre transacciones.  
+    - Si tiene varios picos ➜ existen distintos patrones de compra según el producto.
+    """)
