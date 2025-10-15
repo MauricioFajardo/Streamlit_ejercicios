@@ -23,10 +23,11 @@ tabs = st.tabs([
     "Ejercicio 2",
     "Ejercicio 3",
     "Ejercicio 4",
-    "Ejercicio 5 (Pandas)"  # 👈 Nueva pestaña añadida
+    "Ejercicio 5 (Pandas)",
+    "Descargar CSV (Pandas)"  # 👈 Nueva pestaña
 ])
 
-
+# ================== EJERCICIO 1 ==================
 with tabs[0]:
     st.header("🧮 Ejercicio 1: Estadísticos básicos del 1 al 100")
     arr = np.arange(1, 101)
@@ -41,6 +42,7 @@ with tabs[0]:
     col3.metric("Varianza", f"{varianza:.2f}")
     col4.metric("Percentil 90", f"{percentil_90:.2f}")
 
+# ================== EJERCICIO 2 ==================
 with tabs[1]:
     st.header("🎲 Ejercicio 2: Matriz aleatoria 5x5")
     matriz = np.random.randn(5, 5)
@@ -51,6 +53,7 @@ with tabs[1]:
     col1.metric("Determinante", f"{determinante:.4f}")
     col2.metric("Traza", f"{traza:.4f}")
 
+# ================== EJERCICIO 3 ==================
 with tabs[2]:
     st.header("📈 Ejercicio 3: Distribución de frecuencias")
     enteros = np.random.randint(0, 11, 1000)
@@ -59,6 +62,7 @@ with tabs[2]:
     st.dataframe(df_frecuencia)
     st.bar_chart(df_frecuencia, x="Valor", y="Frecuencia")
 
+# ================== EJERCICIO 4 ==================
 with tabs[3]:
     st.header("📏 Ejercicio 4: Normalización de un vector")
     opcion = st.radio("Selecciona una opción:", ["Usar vector por defecto", "Ingresar manualmente"])
@@ -77,7 +81,44 @@ with tabs[3]:
         col1.code(f"{v}", language="python")
         col2.code(f"{np.round(v_normalizado, 3)}", language="python")
 
-#
+    st.divider()
+    st.header("Sección adicional: Datos de jóvenes del ciclo")
+
+    materias_posibles = [
+        "Aplicaciones seguras", "IA", "Formulación de proyectos",
+        "Proyectos tecnológicos", "Aplicación en la nube"
+    ]
+
+    nombres_completos = [
+        "Mariuxi Andrea Calle Dumaguala", "Maura Mileth Calle Leon",
+        "Steven Alexander Carpio Chillogallo", "Erick Fernando Chacon Avila",
+        "Edwin Alexander Choez Dominguez", "Adriana Valentina Cornejo Ulloa",
+        "David Alfonso Espinoza Chévez", "Anthony Mauricio Fajardo Vasquez",
+        "Freddy Ismael Gomez Ordoñez", "Wendy Nicole Llivichuzhca Mayancela",
+        "Alexander Ismael Loja Llivichuzhca", "David Alexander Lopez Saltos",
+        "Victor Jonnathan Mendez Villa", "John Sebastian Montenegro Calle",
+        "Carmen Elizabeth Neira Inga", "Joel Stalyn Pesantez Berrezueta",
+        "Gilson Stalyn Tenemea Aguilar", "Kenny Alexander Valdivieso Coronel"
+    ]
+
+    nombres, apellidos = [], []
+    for n in nombres_completos:
+        partes = n.split()
+        nombres.append(" ".join(partes[:-2]))
+        apellidos.append(" ".join(partes[-2:]))
+
+    datos_iniciales = {
+        "nombres": nombres,
+        "apellidos": apellidos,
+        "edad": np.random.randint(20, 26, size=18),
+        "notas": np.random.uniform(6, 10, size=18).round(2),
+        "materias": np.random.choice(materias_posibles, size=18)
+    }
+
+    df_jovenes = pd.DataFrame(datos_iniciales)
+    st.data_editor(df_jovenes, use_container_width=True)
+
+# ================== EJERCICIO 5 (PANDAS) ==================
 with tabs[4]:
     st.header("🧩 Ejercicio 5: Análisis de Datos con Pandas")
 
@@ -125,7 +166,7 @@ with tabs[4]:
         st.success("✅ Imputación realizada con éxito.")
         st.dataframe(df_imputado.head(10))
 
-        if "mes" in df_imputado.columns and "producto" in df_imputado.columns and "venta" in df_imputado.columns:
+        if {"mes", "producto", "venta"}.issubset(df_imputado.columns):
             st.subheader("📊 Tabla dinámica (ventas por mes y producto):")
             tabla = pd.pivot_table(df_imputado, values="venta", index="mes", columns="producto", aggfunc="sum", fill_value=0)
             st.dataframe(tabla, use_container_width=True)
@@ -151,39 +192,24 @@ with tabs[4]:
     else:
         st.info("📥 Carga un archivo CSV para comenzar el análisis.")
 
-st.divider()
-st.header("Sección adicional: Datos de jóvenes del ciclo")
+# ================== DESCARGAR CSV ==================
+with tabs[5]:
+    st.header("📂 Descargar CSV de ejemplo para Pandas")
 
-materias_posibles = [
-    "Aplicaciones seguras", "IA", "Formulación de proyectos",
-    "Proyectos tecnológicos", "Aplicación en la nube"
-]
+    data = {
+        "producto": ["A","A","A","B","B","B","C","C","C","D","D","D","E","E","E"],
+        "mes": ["Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo","Enero","Febrero","Marzo"],
+        "venta": [200,150,None,300,250,280,100,50,120,400,420,None,350,330,360],
+        "cantidad": [10,8,12,15,None,18,5,3,4,20,21,19,16,None,18]
+    }
 
-nombres_completos = [
-    "Mariuxi Andrea Calle Dumaguala", "Maura Mileth Calle Leon",
-    "Steven Alexander Carpio Chillogallo", "Erick Fernando Chacon Avila",
-    "Edwin Alexander Choez Dominguez", "Adriana Valentina Cornejo Ulloa",
-    "David Alfonso Espinoza Chévez", "Anthony Mauricio Fajardo Vasquez",
-    "Freddy Ismael Gomez Ordoñez", "Wendy Nicole Llivichuzhca Mayancela",
-    "Alexander Ismael Loja Llivichuzhca", "David Alexander Lopez Saltos",
-    "Victor Jonnathan Mendez Villa", "John Sebastian Montenegro Calle",
-    "Carmen Elizabeth Neira Inga", "Joel Stalyn Pesantez Berrezueta",
-    "Gilson Stalyn Tenemea Aguilar", "Kenny Alexander Valdivieso Coronel"
-]
+    df_csv = pd.DataFrame(data)
+    st.dataframe(df_csv, use_container_width=True)
 
-nombres, apellidos = [], []
-for n in nombres_completos:
-    partes = n.split()
-    nombres.append(" ".join(partes[:-2]))
-    apellidos.append(" ".join(partes[-2:]))
-
-datos_iniciales = {
-    "nombres": nombres,
-    "apellidos": apellidos,
-    "edad": np.random.randint(20, 26, size=18),
-    "notas": np.random.uniform(6, 10, size=18).round(2),
-    "materias": np.random.choice(materias_posibles, size=18)
-}
-
-df_jovenes = pd.DataFrame(datos_iniciales)
-st.data_editor(df_jovenes, use_container_width=True)
+    csv = df_csv.to_csv(index=False).encode("utf-8")
+    st.download_button(
+        label="📥 Descargar CSV de ejemplo",
+        data=csv,
+        file_name="ventas_productos.csv",
+        mime="text/csv",
+    )
